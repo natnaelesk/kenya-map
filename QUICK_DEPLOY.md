@@ -11,7 +11,8 @@
 
 2. **Create Web Service**
    - Render Dashboard → New → Web Service
-   - Connect GitHub repo: `https://github.com/mmigithubacc/county.git`
+   - Connect GitHub repo: `https://github.com/natnaelesk/kenya-map.git`
+   - **Root Directory:** Leave empty (deploys from root) ✅
    - **Build Command:**
      ```bash
      pip install -r requirements.txt && python manage.py collectstatic --no-input && python manage.py migrate --no-input
@@ -37,8 +38,8 @@
 
 1. **Import Project**
    - Vercel Dashboard → Add New → Project
-   - Import GitHub repo: `https://github.com/mmigithubacc/county.git`
-   - **Root Directory:** `frontend`
+   - Import GitHub repo: `https://github.com/natnaelesk/kenya-map.git`
+   - **Root Directory:** `frontend` (only for frontend)
    - Framework: Vite (auto-detected)
 
 2. **Set Environment Variable:**

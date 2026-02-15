@@ -28,14 +28,14 @@ This guide will help you deploy the County Transparency Platform to production.
 ### Step 2: Create Web Service on Render
 
 1. In Render Dashboard, click **"New +"** → **"Web Service"**
-2. Connect your GitHub repository: `https://github.com/mmigithubacc/county.git`
+2. Connect your GitHub repository: `https://github.com/natnaelesk/kenya-map.git`
 3. Configure the service:
 
    **Basic Settings:**
    - **Name**: `county-backend` (or your preferred name)
    - **Region**: Same as database
    - **Branch**: `main` (or your default branch)
-   - **Root Directory**: Leave empty (or set to root)
+   - **Root Directory**: **Leave empty** ✅ (Backend deploys from root directory)
    - **Environment**: `Python 3`
    - **Build Command**: 
      ```bash
@@ -85,12 +85,12 @@ python -c "from django.core.management.utils import get_random_secret_key; print
 
 1. Go to [Vercel Dashboard](https://vercel.com/dashboard)
 2. Click **"Add New..."** → **"Project"**
-3. Import your GitHub repository: `https://github.com/mmigithubacc/county.git`
+3. Import your GitHub repository: `https://github.com/natnaelesk/kenya-map.git`
 4. Configure:
 
    **Project Settings:**
    - **Framework Preset**: Vite
-   - **Root Directory**: `frontend`
+   - **Root Directory**: `frontend` (Frontend is in subdirectory)
    - **Build Command**: `npm run build` (auto-detected)
    - **Output Directory**: `dist` (auto-detected)
    - **Install Command**: `npm install` (auto-detected)
