@@ -36,6 +36,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -64,7 +65,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "backend.wsgi.application"
 
-# Database — defaults to SQLite for local dev; set env vars for Supabase Postgres
+# Database — defaults to SQLite for local dev; set env vars for PostgreSQL (Render)
 DATABASES = {
     "default": {
         "ENGINE": os.environ.get("DB_ENGINE", "django.db.backends.sqlite3"),
@@ -75,6 +76,14 @@ DATABASES = {
         "PORT": os.environ.get("DB_PORT", ""),
     }
 }
+
+# If DATABASE_URL is set (Render provides this), use it
+if "DATABASE_URL" in os.environ:
+    import dj_database_url
+    DATABASES["default"] = dj_database_url.config(
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
@@ -89,13 +98,30 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = "static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# CORS — allow the Vite dev server
-CORS_ALLOWED_ORIGINS = os.environ.get(
-    "CORS_ALLOWED_ORIGINS",
-    "http://localhost:5173,http://127.0.0.1:5173",
-).split(",")
+# CORS — allow the Vite dev server and production frontend (Vercel)
+CORS_ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in os.environ.get(
+        "CORS_ALLOWED_ORIGINS",
+        "http://localhost:5173,http://127.0.0.1:5173",
+    ).split(",")
+    if origin.strip()
+]
+
+# Allow all origins in development if DEBUG is True (for testing)
+if DEBUG:
+    CORS_ALLOW_ALL_ORIGINS = True
+else:
+    # In production, also allow Vercel preview deployments
+    # Vercel URLs follow pattern: *.vercel.app
+    CORS_ALLOWED_ORIGIN_REGEXES = [
+        r"^https://.*\.vercel\.app$",
+    ]
 
 # DRF
 REST_FRAMEWORK = {
