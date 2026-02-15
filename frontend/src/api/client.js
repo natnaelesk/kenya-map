@@ -1,6 +1,8 @@
 import axios from "axios";
 
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
+// In dev, Vite proxy forwards /api to localhost:8000.
+// In production, set VITE_API_URL to your deployed backend (e.g. on Railway/Render).
+const API_BASE = import.meta.env.VITE_API_URL || "/api";
 
 const api = axios.create({
   baseURL: API_BASE,
