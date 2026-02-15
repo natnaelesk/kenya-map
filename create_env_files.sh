@@ -9,7 +9,7 @@ cat > .env << 'EOF'
 # This file is gitignored for security - DO NOT COMMIT SECRETS
 
 # Django Settings
-DJANGO_SECRET_KEY=z-jd$len8(mk!t2@25tcz6_8)h3h$@kd%c_v7r@_cvub)xyid_
+DJANGO_SECRET_KEY=86#_lw%r2(py@lnnde@@7)2xvr6tem-&rvop7f0dr$d+-v9um5
 DJANGO_DEBUG=False
 DJANGO_ALLOWED_HOSTS=kenya-map.onrender.com
 
