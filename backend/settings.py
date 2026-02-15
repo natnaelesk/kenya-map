@@ -16,6 +16,15 @@ DEBUG = os.environ.get("DJANGO_DEBUG", "True").lower() in ("true", "1")
 
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 
+# Strip whitespace from each host
+ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS if host.strip()]
+
+# In production, add Render domain if not already included
+if not DEBUG:
+    render_host = "kenya-map.onrender.com"
+    if render_host not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(render_host)
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
