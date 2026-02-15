@@ -8,7 +8,7 @@ Write-Host "Creating .env files..." -ForegroundColor Green
 # This file is gitignored for security - DO NOT COMMIT SECRETS
 
 # Django Settings
-DJANGO_SECRET_KEY=86#_lw%r2(py@lnnde@@7)2xvr6tem-&rvop7f0dr$d+-v9um5
+DJANGO_SECRET_KEY=2&@!c(c#$*6hu6r8=9s=b(bsfyy5di160+%vl@8t0)yt=l3x*@
 DJANGO_DEBUG=False
 DJANGO_ALLOWED_HOSTS=kenya-map.onrender.com
 
