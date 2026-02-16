@@ -80,3 +80,4 @@ gunicorn backend.wsgi:application --bind 0.0.0.0:8000
 - CORS is configured to allow your frontend domain(s)
 - Make sure to run migrations after the first deployment
 
+

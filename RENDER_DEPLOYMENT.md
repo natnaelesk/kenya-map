@@ -97,3 +97,4 @@ If you prefer, you can use the `render.yaml` Blueprint:
 
 **Summary**: Leave Root Directory **EMPTY** in Render settings. Everything is configured to work from the repository root! ✅
 
+

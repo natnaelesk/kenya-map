@@ -72,3 +72,4 @@ if __name__ == "__main__":
         print("  2. Frontend: cd frontend && npm run dev")
         sys.exit(1)
 
+
