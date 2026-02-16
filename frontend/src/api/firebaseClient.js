@@ -265,24 +265,33 @@ export const fetchGovernors = async () => {
 };
 
 export const fetchGovernorComparison = async () => {
-  const snapshot = await getDocs(collection(db, "governorMetrics"));
-  const metrics = snapshot.docs.map(convertFirestoreData);
-  
-  // Group by governor
-  const comparison = {};
+  const [governorsSnapshot, metricsSnapshot] = await Promise.all([
+    getDocs(collection(db, "governors")),
+    getDocs(collection(db, "governorMetrics")),
+  ]);
+
+  const governors = governorsSnapshot.docs.map(convertFirestoreData);
+  const metrics = metricsSnapshot.docs.map(convertFirestoreData);
+
+  // Group metrics by governor
+  const metricsByGovernor = {};
   metrics.forEach((metric) => {
     const govId = metric.governor_id;
-    if (!comparison[govId]) {
-      comparison[govId] = {
-        governor_id: govId,
-        governor_name: metric.governor_name || "Unknown",
-        metrics: [],
-      };
+    if (!metricsByGovernor[govId]) {
+      metricsByGovernor[govId] = [];
     }
-    comparison[govId].metrics.push(metric);
+    metricsByGovernor[govId].push(metric);
   });
 
-  return { data: Object.values(comparison) };
+  // Combine governors with their metrics
+  const governorsWithMetrics = governors.map((gov) => ({
+    ...gov,
+    id: gov.id,
+    name: gov.name,
+    metrics: metricsByGovernor[gov.id] || [],
+  }));
+
+  return { data: governorsWithMetrics };
 };
 
 export const fetchMPs = async (params = {}) => {
@@ -300,15 +309,64 @@ export const fetchMPs = async (params = {}) => {
 };
 
 export const fetchMPComparison = async () => {
-  const snapshot = await getDocs(collection(db, "mps"));
-  const mps = snapshot.docs.map(convertFirestoreData);
-  
-  // Calculate comparison metrics
-  return {
-    data: mps.map((mp) => ({
+  const [mpsSnapshot, activitiesSnapshot, subCountiesSnapshot] = await Promise.all([
+    getDocs(collection(db, "mps")),
+    getDocs(collection(db, "mpActivities")),
+    getDocs(collection(db, "subCounties")),
+  ]);
+
+  const mps = mpsSnapshot.docs.map(convertFirestoreData);
+  const activities = activitiesSnapshot.docs.map(convertFirestoreData);
+  const subCounties = subCountiesSnapshot.docs.map(convertFirestoreData);
+
+  // Group activities by MP
+  const activitiesByMP = {};
+  activities.forEach((activity) => {
+    const mpId = activity.mp_id;
+    if (!activitiesByMP[mpId]) {
+      activitiesByMP[mpId] = [];
+    }
+    activitiesByMP[mpId].push(activity);
+  });
+
+  // Calculate metrics for each MP
+  const mpsWithMetrics = mps.map((mp) => {
+    const mpActivities = activitiesByMP[mp.id] || [];
+    const weddings_attended = mpActivities.filter(
+      (a) => a.activity_type === "wedding_attended"
+    ).length;
+    const constituency_visits = mpActivities.filter(
+      (a) => a.activity_type === "constituency_visit"
+    ).length;
+    const total_activities = mpActivities.length;
+
+    return {
       ...mp,
-      activities_count: 0, // Will be calculated from activities
-    })),
+      weddings_attended,
+      constituency_visits,
+      total_activities,
+    };
+  });
+
+  // Group by sub-county
+  const groupedBySubCounty = {};
+  subCounties.forEach((sc) => {
+    groupedBySubCounty[sc.id] = {
+      sub_county: sc.name,
+      sub_county_id: sc.id,
+      mps: [],
+    };
+  });
+
+  mpsWithMetrics.forEach((mp) => {
+    const subCountyId = mp.sub_county_id;
+    if (groupedBySubCounty[subCountyId]) {
+      groupedBySubCounty[subCountyId].mps.push(mp);
+    }
+  });
+
+  return {
+    data: Object.values(groupedBySubCounty).filter((sc) => sc.mps.length > 0),
   };
 };
 

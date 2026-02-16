@@ -18,10 +18,14 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Initialize Analytics (only in browser)
+// Initialize Analytics (only in browser and production)
 let analytics = null;
-if (typeof window !== 'undefined') {
-  analytics = getAnalytics(app);
+if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+  try {
+    analytics = getAnalytics(app);
+  } catch (error) {
+    console.warn('Analytics initialization failed:', error);
+  }
 }
 
 // Initialize Firestore
