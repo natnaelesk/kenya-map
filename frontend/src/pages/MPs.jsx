@@ -30,23 +30,28 @@ export default function MPs() {
   }, []);
 
   if (loading) return <div className="loading">Loading MPs...</div>;
+  if (!data || data.length === 0) return <div className="error">No MP data available</div>;
 
   // Build comparison chart data — weddings attended per constituency per cycle
-  const weddingData = data.map((sc) => {
-    const row = { constituency: sc.sub_county };
-    sc.mps.forEach((mp) => {
-      row[mp.election_cycle_name] = mp.weddings_attended;
+  const weddingData = data
+    .filter((sc) => sc.mps && Array.isArray(sc.mps))
+    .map((sc) => {
+      const row = { constituency: sc.sub_county };
+      (sc.mps || []).forEach((mp) => {
+        row[mp.election_cycle_name] = mp.weddings_attended || 0;
+      });
+      return row;
     });
-    return row;
-  });
 
-  const visitData = data.map((sc) => {
-    const row = { constituency: sc.sub_county };
-    sc.mps.forEach((mp) => {
-      row[mp.election_cycle_name] = mp.constituency_visits;
+  const visitData = data
+    .filter((sc) => sc.mps && Array.isArray(sc.mps))
+    .map((sc) => {
+      const row = { constituency: sc.sub_county };
+      (sc.mps || []).forEach((mp) => {
+        row[mp.election_cycle_name] = mp.constituency_visits || 0;
+      });
+      return row;
     });
-    return row;
-  });
 
   return (
     <div className="page">
@@ -92,7 +97,9 @@ export default function MPs() {
         </div>
       </div>
 
-      {data.map((sc) => (
+      {data
+        .filter((sc) => sc.mps && Array.isArray(sc.mps) && sc.mps.length > 0)
+        .map((sc) => (
         <div key={sc.sub_county} className="card" style={{ marginBottom: "1rem" }}>
           <h3>{sc.sub_county} Constituency</h3>
           <div className="table-container">
@@ -111,7 +118,7 @@ export default function MPs() {
                 </tr>
               </thead>
               <tbody>
-                {sc.mps.map((mp) => (
+                {(sc.mps || []).map((mp) => (
                   <tr key={mp.id}>
                     <td>
                       <strong>{mp.name}</strong>
