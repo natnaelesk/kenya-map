@@ -14,10 +14,8 @@ A comprehensive transparency platform for tracking county governance, funds, pro
 ## 🛠️ Tech Stack
 
 ### Backend
-- **Django 5.2** - Web framework
-- **Django REST Framework** - API development
-- **PostgreSQL** - Database (production)
-- **SQLite** - Database (development)
+- **Firebase Firestore** - NoSQL database (replaces Django backend)
+- **Firebase Analytics** - Analytics tracking
 
 ### Frontend
 - **React 19** - UI library
@@ -25,32 +23,14 @@ A comprehensive transparency platform for tracking county governance, funds, pro
 - **React Router** - Navigation
 - **Recharts** - Data visualization
 - **Leaflet** - Interactive maps
+- **Firebase SDK** - Firebase integration
 
 ## 📦 Installation
 
 ### Prerequisites
-- Python 3.8+
 - Node.js 16+
 - npm or yarn
-
-### Backend Setup
-
-```bash
-# Install dependencies
-pip install -r requirements.txt
-
-# Run migrations
-python manage.py migrate
-
-# Create superuser (optional)
-python manage.py createsuperuser
-
-# Seed sample data (optional)
-python manage.py seed_data
-
-# Run development server
-python manage.py runserver
-```
+- Firebase account (already configured)
 
 ### Frontend Setup
 
@@ -60,9 +40,14 @@ cd frontend
 # Install dependencies
 npm install
 
+# Populate Firebase with dummy data (first time only)
+npm run populate-firebase
+
 # Run development server
 npm run dev
 ```
+
+**Note:** No backend server needed! The app uses Firebase Firestore directly.
 
 ## 🌐 Deployment
 
